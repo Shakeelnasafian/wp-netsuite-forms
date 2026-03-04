@@ -8,6 +8,15 @@ class WPNS_File_Uploader {
         'application/pdf',
     ];
 
+    /**
+     * Uploads a file from a temporary filesystem path into the WordPress media library.
+     *
+     * Validates the source file and MIME type, creates the upload and attachment, generates attachment metadata, and returns the resulting attachment URL.
+     *
+     * @param string $tmp_path Path to the source temporary file.
+     * @param string $filename Desired filename for the uploaded attachment (used for storage and sanitized title).
+     * @return string The attachment URL on success, or an empty string on failure.
+     */
     public static function upload_from_path(string $tmp_path, string $filename): string {
         if (!file_exists($tmp_path)) {
             return '';

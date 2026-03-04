@@ -1,4 +1,19 @@
 jQuery(function($) {
+    /**
+     * Populate credential form fields from a credential object.
+     *
+     * @param {Object} cred - Credential data used to fill the form.
+     * @param {number} [cred.id] - Credential ID; defaults to 0 if missing or falsy.
+     * @param {string} [cred.profile_name] - Profile name; defaults to empty string.
+     * @param {string} [cred.account_id] - Account ID; defaults to empty string.
+     * @param {string} [cred.realm] - Realm; defaults to empty string.
+     * @param {string} [cred.consumer_key] - Consumer key; defaults to empty string.
+     * @param {string} [cred.consumer_secret] - Consumer secret; defaults to empty string.
+     * @param {string} [cred.token_key] - Token key; defaults to empty string.
+     * @param {string} [cred.token_secret] - Token secret; defaults to empty string.
+     * @param {string} [cred.script_id] - Script ID; defaults to empty string.
+     * @param {string} [cred.deploy_id] - Deploy ID; defaults to '1' if missing or falsy.
+     */
     function fillForm(cred) {
         $('#wpns-credential-id').val(cred.id || 0);
         $('#wpns-profile-name').val(cred.profile_name || '');

@@ -1,6 +1,13 @@
 <?php
 
 class WPNS_Admin_Form_Edit {
+    /**
+     * Render the admin form editor interface for creating or editing a form.
+     *
+     * Loads form data based on the `form_id` request parameter and outputs the
+     * complete multi-tab HTML UI for Form Details, Form Fields, NetSuite Mapping
+     * (including static values), and Email Notification settings.
+     */
     public function render(): void {
         $form_id = isset($_GET['form_id']) ? absint($_GET['form_id']) : 0;
         $form = $form_id ? WPNS_Form_Model::get($form_id) : null;
@@ -139,6 +146,17 @@ class WPNS_Admin_Form_Edit {
         echo '</div>';
     }
 
+    /**
+     * Render an HTML list item representing a form field row for the admin form editor.
+     *
+     * Renders the field row (header and body) and echoes the resulting HTML. When
+     * $is_template is true the row is produced as a hidden template suitable for
+     * client-side cloning.
+     *
+     * @param object|null $field An object containing field properties (or null for a template row). Recognized properties: `field_name`, `field_label`, `field_type`, `placeholder`, `default_val`, `css_class`, and `is_required`.
+     * @param array $options An array of option definitions for select-like fields; each option is an associative array with keys `label` and `value`.
+     * @param bool $is_template If true, output the row as a hidden template (`display:none`) and add the template CSS class.
+     */
     private function render_field_row(?object $field, array $options, bool $is_template = false): void {
         $classes = 'wpns-field-row';
         if ($is_template) {

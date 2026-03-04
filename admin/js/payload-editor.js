@@ -1,4 +1,9 @@
 jQuery(function($) {
+    /**
+     * Insert the given text at the element's current cursor or selection, move the caret to the end of the inserted text, and focus the element.
+     * @param {HTMLInputElement|HTMLTextAreaElement} el - The input or textarea element where the text will be inserted.
+     * @param {string} text - The text to insert at the cursor/selection position.
+     */
     function insertAtCursor(el, text) {
         if (!el) {
             return;

@@ -4,11 +4,28 @@ class WPNS_Netsuite_Client {
     private WPNS_Netsuite_Auth $auth;
     private object $credential;
 
+    /**
+     * Initialize the client with the provided credential and instantiate the NetSuite auth helper.
+     *
+     * @param object $credential An object containing NetSuite credential fields (e.g., account_id, script_id, deploy_id and authentication keys) used to build request authorization.
+     */
     public function __construct(object $credential) {
         $this->credential = $credential;
         $this->auth = new WPNS_Netsuite_Auth($credential);
     }
 
+    /**
+     * Send a JSON payload to a NetSuite RESTlet and return standardized response metadata.
+     *
+     * Builds the RESTlet URL from the stored credential, posts the provided JSON payload, and returns the raw response with HTTP status information.
+     *
+     * @param string $json_payload JSON-encoded request body to send to the RESTlet.
+     * @return array{
+     *     success: bool,   // `true` when the HTTP status code is between 200 and 299, `false` otherwise
+     *     response: string, // raw response body or an error message if the request failed
+     *     http_code: int    // HTTP status code returned by the request (0 if cURL is unavailable)
+     * }
+     */
     public function post(string $json_payload): array {
         if (!function_exists('curl_init')) {
             return [

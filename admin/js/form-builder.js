@@ -1,4 +1,9 @@
 jQuery(function($) {
+    /**
+     * Convert a string into a slug suitable for use as an identifier.
+     * @param {string} value - The input string to convert.
+     * @returns {string} The input transformed to lowercase with non-alphanumeric sequences replaced by underscores and leading/trailing underscores removed.
+     */
     function slugify(value) {
         return value
             .toLowerCase()
@@ -6,6 +11,10 @@ jQuery(function($) {
             .replace(/^_+|_+$/g, '');
     }
 
+    /**
+     * Show or hide the field's options area based on the field type.
+     * @param {jQuery} $row - The field row element containing a `.wpns-field-type` select and a `.wpns-field-options` container; shows `.wpns-field-options` when type is `select`, `radio`, or `checkbox`, hides it otherwise.
+     */
     function toggleOptions($row) {
         var type = $row.find('.wpns-field-type').val();
         var $opts = $row.find('.wpns-field-options');
@@ -16,6 +25,13 @@ jQuery(function($) {
         }
     }
 
+    /**
+     * Insert given text at the current cursor/selection in a text input or textarea element.
+     *
+     * Replaces the current selection (if any) with the provided text, moves the caret to the end of the inserted text, and focuses the element.
+     * @param {HTMLInputElement|HTMLTextAreaElement} el - The target input or textarea element.
+     * @param {string} text - The text to insert at the cursor position.
+     */
     function insertAtCursor(el, text) {
         if (!el) {
             return;

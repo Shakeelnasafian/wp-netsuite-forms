@@ -1,6 +1,13 @@
 <?php
 
 class WPNS_Activator {
+    /**
+     * Create the plugin's database schema and save the current plugin version.
+     *
+     * Creates the tables required by the plugin (forms, fields, credentials,
+     * form settings, and submissions) and updates the stored plugin version so
+     * WordPress recognizes the activation/migration state.
+     */
     public static function activate(): void {
         global $wpdb;
         $charset = $wpdb->get_charset_collate();

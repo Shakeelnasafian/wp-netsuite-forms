@@ -1,6 +1,15 @@
 <?php
 
 class WPNS_Admin_Credentials {
+    /**
+     * Render the admin UI for managing NetSuite credentials.
+     *
+     * Outputs an HTML section containing a table of existing credentials (or a no-credentials message),
+     * action controls for each credential (edit, test, delete), and an Add / Edit form with fields for
+     * profile name, account ID, realm, consumer key/secret, token key/secret, script ID, and deploy ID.
+     *
+     * @return void
+     */
     public function render(): void {
         $credentials = WPNS_Credential_Model::get_all();
 

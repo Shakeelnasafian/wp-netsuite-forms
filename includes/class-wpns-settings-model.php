@@ -1,6 +1,29 @@
 <?php
 
 class WPNS_Settings_Model {
+    /**
+     * Insert or update a form's settings row in the wpns_form_settings table.
+     *
+     * Saves provided settings for the given form ID; updates the existing row if one exists
+     * for the form_id, otherwise inserts a new row. Boolean-like flags `enable_netsuite`
+     * and `enable_email` are normalized to 1 (enabled) or 0 (disabled).
+     *
+     * @param int   $form_id The ID of the form to save settings for.
+     * @param array $data    Associative array of settings. Recognized keys:
+     *                       - credential_id (int)
+     *                       - payload_template (string)
+     *                       - static_values_json (string)
+     *                       - email_to (string)
+     *                       - email_cc (string)
+     *                       - email_bcc (string)
+     *                       - email_subject (string)
+     *                       - email_body (string)
+     *                       - email_from_name (string)
+     *                       - email_from_address (string)
+     *                       - enable_netsuite (truthy to enable)
+     *                       - enable_email (truthy to enable)
+     * @return bool True if the insert or update operation succeeded, false otherwise.
+     */
     public static function save(int $form_id, array $data): bool {
         global $wpdb;
         $table = $wpdb->prefix . 'wpns_form_settings';
@@ -51,6 +74,12 @@ class WPNS_Settings_Model {
         return $wpdb->query($sql) !== false;
     }
 
+    /**
+     * Fetches the settings row for a given form ID.
+     *
+     * @param int $form_id The form's database ID whose settings to retrieve.
+     * @return object|null The settings row as an object when found, or `null` if no matching row exists.
+     */
     public static function get(int $form_id): ?object {
         global $wpdb;
         $table = $wpdb->prefix . 'wpns_form_settings';
@@ -59,6 +88,12 @@ class WPNS_Settings_Model {
         return $row ?: null;
     }
 
+    /**
+     * Deletes the settings row for the specified form from the wpns_form_settings table.
+     *
+     * @param int $form_id The ID of the form whose settings should be deleted.
+     * @return bool `true` if the delete operation succeeded, `false` otherwise.
+     */
     public static function delete_by_form(int $form_id): bool {
         global $wpdb;
         $table = $wpdb->prefix . 'wpns_form_settings';

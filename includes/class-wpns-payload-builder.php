@@ -1,6 +1,15 @@
 <?php
 
 class WPNS_Payload_Builder {
+    /**
+     * Build a JSON payload by substituting template tokens, applying static nested values, and optionally injecting an image URL.
+     *
+     * @param string $payload_template Template containing tokens in the form {{ token }}.
+     * @param array $submitted_data Map of token names to replacement values; array values are joined with ", ".
+     * @param string $static_values_json JSON object whose keys are dot-separated paths and values are assigned into the payload.
+     * @param string $image_url Optional URL to replace any image-related tokens (`image_url` or leaf values equal to `{{image_url}}`).
+     * @return string The final payload as a JSON-encoded string; if the template after token replacement is not valid JSON, returns that replaced string unchanged.
+     */
     public static function build(
         string $payload_template,
         array $submitted_data,
@@ -48,6 +57,16 @@ class WPNS_Payload_Builder {
         return wp_json_encode($decoded);
     }
 
+    /**
+     * Set a value in a nested array using a dot-separated path.
+     *
+     * Creates intermediate arrays as needed and assigns `$value` at the final key.
+     * If `$path` is an empty string the array is left unchanged.
+     *
+     * @param array<string,mixed> &$arr The array to modify (passed by reference).
+     * @param string $path Dot-separated path of keys (e.g., "a.b.c").
+     * @param mixed $value The value to assign at the final key.
+     */
     private static function set_nested(array &$arr, string $path, $value): void {
         if ($path === '') {
             return;
@@ -69,6 +88,12 @@ class WPNS_Payload_Builder {
         }
     }
 
+    /**
+     * Recursively replaces any leaf values equal to '{{image_url}}' with the provided image URL.
+     *
+     * @param array &$arr The array to modify in place; nested arrays are traversed recursively.
+     * @param string $image_url The URL to substitute for '{{image_url}}' tokens.
+     */
     private static function replace_image_tokens(array &$arr, string $image_url): void {
         foreach ($arr as $key => $value) {
             if (is_array($value)) {

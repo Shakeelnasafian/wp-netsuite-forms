@@ -5,6 +5,13 @@ if (!class_exists('WP_List_Table')) {
 }
 
 class WPNS_Admin_Forms {
+    /**
+     * Render the WP NetSuite Forms admin page and display the forms list table.
+     *
+     * Outputs the page wrapper and header (including the localized title and an
+     * "Add New" action), initializes and prepares a WPNS_Forms_List_Table, and
+     * renders the table into the admin screen.
+     */
     public function render(): void {
         $table = new WPNS_Forms_List_Table();
         $table->prepare_items();
@@ -20,6 +27,11 @@ class WPNS_Admin_Forms {
 }
 
 class WPNS_Forms_List_Table extends WP_List_Table {
+    /**
+     * Define the table columns and their localized header labels for the forms list.
+     *
+     * @return array Associative array mapping column keys (`id`, `name`, `status`, `shortcode`, `created_at`) to their localized header labels.
+     */
     public function get_columns(): array {
         return [
             'id' => __('ID', 'wp-netsuite-forms'),
@@ -30,6 +42,12 @@ class WPNS_Forms_List_Table extends WP_List_Table {
         ];
     }
 
+    /**
+     * Populate the list table with all stored forms and initialize its column headers.
+     *
+     * Retrieves all form records, assigns them to the table's items, and sets the internal
+     * `_column_headers` using the table's column definitions.
+     */
     public function prepare_items(): void {
         $data = WPNS_Form_Model::get_all();
 
@@ -40,6 +58,12 @@ class WPNS_Forms_List_Table extends WP_List_Table {
         $this->_column_headers = [$columns, $hidden, $sortable];
     }
 
+    / **
+     * Render the "Name" column for a form row, including an edit link and row action links.
+     *
+     * @param object $item Form record object with at least `id` and `name` properties.
+     * @return string HTML for the column cell: a stronged edit link for the form name followed by row actions (Edit, Delete).
+     */
     protected function column_name($item): string {
         $edit_url = admin_url('admin.php?page=wpns-form-edit&form_id=' . $item->id);
         $actions = [
@@ -49,10 +73,23 @@ class WPNS_Forms_List_Table extends WP_List_Table {
         return '<strong><a href="' . esc_url($edit_url) . '">' . esc_html($item->name) . '</a></strong>' . $this->row_actions($actions);
     }
 
+    /**
+     * Render the form's shortcode wrapped in a `<code>` HTML element.
+     *
+     * @param object $item The form record; its `id` property will be used in the shortcode.
+     * @return string The HTML string containing the shortcode `[wpns_form id="X"]`.
+     */
     protected function column_shortcode($item): string {
         return '<code>[wpns_form id="' . esc_html($item->id) . '"]</code>';
     }
 
+    /**
+     * Render the default cell value for a given column in the forms list table.
+     *
+     * @param object $item        The form record object for the current row.
+     * @param string $column_name The column identifier.
+     * @return string The cell content: the form `id` as a string for `id`, the escaped `status` for `status`, the escaped `created_at` for `created_at`, or an empty string for unknown columns.
+     */
     protected function column_default($item, $column_name): string {
         switch ($column_name) {
             case 'id':

@@ -3,10 +3,21 @@
 class WPNS_Admin {
     private WPNS_Loader $loader;
 
+    /**
+     * Initialize the admin controller with its dependency loader.
+     *
+     * @param WPNS_Loader $loader The loader responsible for registering WordPress hooks and actions used by this admin controller.
+     */
     public function __construct(WPNS_Loader $loader) {
         $this->loader = $loader;
     }
 
+    /**
+     * Registers admin menu and asset hooks and binds plugin AJAX action handlers.
+     *
+     * Hooks the controller's menu and enqueue callbacks and registers the AJAX endpoints
+     * used by the admin UI (save/delete form, save/delete credential, test NetSuite, delete submission).
+     */
     public function init(): void {
         add_action('admin_menu', [$this, 'register_menus']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
@@ -19,6 +30,16 @@ class WPNS_Admin {
         add_action('wp_ajax_wpns_delete_submission', [$this, 'ajax_delete_submission']);
     }
 
+    /**
+     * Register the plugin's top-level admin menu and its subpages.
+     *
+     * Creates a "WP NetSuite" top-level menu (label: "WP NetSuite Forms", capability: manage_options,
+     * slug: `wpns-forms`, icon: `dashicons-migrate`) and the following submenus:
+     * - All Forms (slug: `wpns-forms`)
+     * - Add New (slug: `wpns-form-edit`)
+     * - Credentials (slug: `wpns-credentials`)
+     * - Submissions (slug: `wpns-submissions`)
+     */
     public function register_menus(): void {
         add_menu_page(
             __('WP NetSuite Forms', 'wp-netsuite-forms'),
@@ -36,6 +57,14 @@ class WPNS_Admin {
         add_submenu_page('wpns-forms', __('Submissions', 'wp-netsuite-forms'), __('Submissions', 'wp-netsuite-forms'), 'manage_options', 'wpns-submissions', [$this, 'page_submissions']);
     }
 
+    /**
+     * Enqueues WP NetSuite Forms admin styles and JavaScript for plugin-related admin pages.
+     *
+     * Only enqueues assets when the current admin page hook contains "wpns". Also localizes
+     * AJAX URL and an admin nonce to the form-builder script.
+     *
+     * @param string $hook The current admin page hook name provided by WordPress.
+     */
     public function enqueue_assets(string $hook): void {
         if (strpos($hook, 'wpns') === false) {
             return;
@@ -54,22 +83,43 @@ class WPNS_Admin {
         ]);
     }
 
+    /**
+     * Render the admin page that lists all WP NetSuite forms.
+     */
     public function page_forms(): void {
         (new WPNS_Admin_Forms())->render();
     }
 
+    /**
+     * Display the admin page for creating or editing a form.
+     */
     public function page_form_edit(): void {
         (new WPNS_Admin_Form_Edit())->render();
     }
 
+    /**
+     * Render the NetSuite Credentials administration page in the WP admin.
+     */
     public function page_credentials(): void {
         (new WPNS_Admin_Credentials())->render();
     }
 
+    /**
+     * Display the Submissions admin page in the WordPress admin.
+     *
+     * Outputs the UI used to view and manage WP NetSuite Forms submissions.
+     */
     public function page_submissions(): void {
         (new WPNS_Admin_Submissions())->render();
     }
 
+    /**
+     * Handle the AJAX request to create or update a form and its related settings and fields.
+     *
+     * Validates nonce and user capability, sanitizes input (form metadata, field definitions, options,
+     * and settings), persists the form record and its fields, saves form settings, and returns a JSON
+     * success payload with the form ID and shortcode or a JSON error on failure.
+     */
     public function ajax_save_form(): void {
         check_ajax_referer('wpns_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -180,6 +230,14 @@ class WPNS_Admin {
         ]);
     }
 
+    /**
+     * Handles the AJAX request to delete a form, validating nonce and user capability,
+     * validating the submitted form ID, deleting the form record, and returning a JSON success or error response.
+     *
+     * The handler verifies the admin nonce and that the current user has the `manage_options`
+     * capability. If the `form_id` POST parameter is missing or invalid, it returns a JSON error;
+     * otherwise it deletes the form and returns a JSON success message.
+     */
     public function ajax_delete_form(): void {
         check_ajax_referer('wpns_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -195,6 +253,16 @@ class WPNS_Admin {
         wp_send_json_success(['message' => __('Form deleted.', 'wp-netsuite-forms')]);
     }
 
+    /**
+     * Handle an AJAX request to create or update a NetSuite credential and return a JSON response.
+     *
+     * Validates the nonce `wpns_admin_nonce` (request field `nonce`) and the `manage_options` capability.
+     * Reads and sanitizes the following POST fields: `credential_id` (optional), `profile_name`, `account_id`,
+     * `realm`, `consumer_key`, `consumer_secret`, `token_key`, `token_secret`, `script_id`, and `deploy_id`.
+     * Creates a new credential or updates an existing one and responds with a JSON success containing
+     * `credential_id` on success. On failure or insufficient permissions it responds with a JSON error
+     * and an explanatory `message` (e.g., "Unauthorized." or "Failed to save credential.").
+     */
     public function ajax_save_credential(): void {
         check_ajax_referer('wpns_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -228,6 +296,13 @@ class WPNS_Admin {
         wp_send_json_success(['credential_id' => $cred_id]);
     }
 
+    /**
+     * Handle the AJAX request to delete a NetSuite credential.
+     *
+     * Performs nonce and capability checks, reads the `credential_id` from POST,
+     * deletes the credential via WPNS_Credential_Model::delete, and sends a JSON
+     * response indicating success or an error (unauthorized or invalid credential).
+     */
     public function ajax_delete_credential(): void {
         check_ajax_referer('wpns_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -243,6 +318,14 @@ class WPNS_Admin {
         wp_send_json_success(['message' => __('Credential deleted.', 'wp-netsuite-forms')]);
     }
 
+    /**
+     * Tests a NetSuite credential by issuing a dummy request and responds with JSON indicating success or failure.
+     *
+     * Validates the admin AJAX nonce and the current user's `manage_options` capability.
+     * Resolves `credential_id` from POST (or from the form's settings when `form_id` is provided), loads the credential,
+     * performs a test request against NetSuite, and returns a JSON success payload with the provider response on success
+     * or a JSON error with optional response details and an HTTP status code on failure.
+     */
     public function ajax_test_netsuite(): void {
         check_ajax_referer('wpns_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -280,6 +363,13 @@ class WPNS_Admin {
         ]);
     }
 
+    /**
+     * Handle an AJAX request to delete a submission.
+     *
+     * Verifies the admin nonce and that the current user has the `manage_options` capability.
+     * Expects `submission_id` in POST as a positive integer; responds with a JSON error if missing or invalid.
+     * On success deletes the submission record and sends a JSON success response.
+     */
     public function ajax_delete_submission(): void {
         check_ajax_referer('wpns_admin_nonce', 'nonce');
         if (!current_user_can('manage_options')) {

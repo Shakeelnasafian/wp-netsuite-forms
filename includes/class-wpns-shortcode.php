@@ -3,14 +3,32 @@
 class WPNS_Shortcode {
     private WPNS_Loader $loader;
 
+    /**
+     * Create a WPNS_Shortcode instance and store the provided loader.
+     *
+     * @param WPNS_Loader $loader Loader instance used to register hooks and shortcodes.
+     */
     public function __construct(WPNS_Loader $loader) {
         $this->loader = $loader;
     }
 
+    /**
+     * Registers the 'wpns_form' WordPress shortcode and binds it to this object's render method.
+     *
+     * The shortcode will invoke WPNS_Shortcode::render when used in post content.
+     */
     public function init(): void {
         add_shortcode('wpns_form', [$this, 'render']);
     }
 
+    /**
+     * Render the WPNS form for the provided shortcode attributes.
+     *
+     * Also enqueues and localizes the front-end script and enqueues the stylesheet required for form submission.
+     *
+     * @param array $atts Shortcode attributes; recognizes an 'id' key for the form ID.
+     * @return string The rendered form HTML, or an empty string if the form ID is invalid or the form is not active.
+     */
     public function render(array $atts): string {
         $atts = shortcode_atts(['id' => 0], $atts);
         $form_id = absint($atts['id']);

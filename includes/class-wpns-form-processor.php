@@ -1,6 +1,15 @@
 <?php
 
 class WPNS_Form_Processor {
+    /**
+     * Handle an incoming AJAX form submission for WP Netsuite Forms.
+     *
+     * Validates the AJAX nonce, validates and sanitizes submitted fields (including required checks),
+     * processes file uploads, merges UTM tracking data, optionally posts a payload to NetSuite and/or
+     * sends email notifications according to form settings, persists the submission record, and
+     * sends a JSON response containing either validation errors or a success message (and optional
+     * redirect URL).
+     */
     public function handle_ajax(): void {
         check_ajax_referer('wpns_form_nonce', 'nonce');
 
