@@ -1,0 +1,50 @@
+.wpns-form {
+    max-width: 640px;
+    margin: 20px auto;
+}
+
+.wpns-form .wpns-field {
+    margin-bottom: 16px;
+}
+
+.wpns-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.wpns-form input[type="text"],
+.wpns-form input[type="email"],
+.wpns-form input[type="tel"],
+.wpns-form input[type="number"],
+.wpns-form input[type="file"],
+.wpns-form textarea,
+.wpns-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.wpns-form .wpns-error {
+    border-color: #d63638;
+}
+
+.wpns-response {
+    margin-top: 10px;
+}
+
+.wpns-success {
+    background: #d1e7dd;
+    color: #0f5132;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.wpns-error-msg {
+    background: #f8d7da;
+    color: #842029;
+    padding: 10px;
+    border-radius: 4px;
+}
