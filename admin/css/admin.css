@@ -1,0 +1,115 @@
+.wpns-form-edit .wpns-shortcode {
+    margin-top: 8px;
+}
+
+#wpns-fields-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wpns-field-row {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.wpns-field-row-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.wpns-field-row-header input,
+.wpns-field-row-header select {
+    min-width: 140px;
+}
+
+.wpns-field-row-body {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.wpns-field-options {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: #f6f7f7;
+    border: 1px dashed #ccd0d4;
+}
+
+.wpns-option-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.wpns-option-row input {
+    min-width: 160px;
+}
+
+.wpns-required {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.wpns-payload-toolbar {
+    margin-top: 8px;
+}
+
+.wpns-token-list {
+    margin-top: 8px;
+}
+
+.wpns-token-list .button-link {
+    margin-right: 6px;
+}
+
+.wpns-static-table input {
+    width: 100%;
+}
+
+.wpns-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.wpns-modal-content {
+    background: #fff;
+    padding: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: auto;
+    position: relative;
+}
+
+.wpns-modal-pre {
+    background: #f6f7f7;
+    padding: 10px;
+}
+
+.wpns-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #ddd;
+}
+
+.wpns-badge.success {
+    background: #46b450;
+    color: #fff;
+}
