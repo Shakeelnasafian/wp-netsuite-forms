@@ -48,3 +48,22 @@
     padding: 10px;
     border-radius: 4px;
 }
+
+.wpns-form .wpns-submit {
+    background: #0073aa;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.wpns-form .wpns-submit:hover {
+    background: #005d8c;
+}
+
+.wpns-form .wpns-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

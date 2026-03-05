@@ -1,7 +1,7 @@
 <?php
 
 class WPNS_Submission_Model {
-    / **
+    /**
      * Insert a new submission record into the wpns_submissions table.
      *
      * Accepts an associative $data array to populate submission fields; missing keys use sensible defaults.
