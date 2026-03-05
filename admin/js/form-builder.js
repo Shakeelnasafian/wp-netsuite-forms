@@ -168,7 +168,7 @@ jQuery(function($) {
         var data = {
             action: 'wpns_save_form',
             nonce: wpns_admin.nonce,
-            form_id: $('input[name="form_id"]').val() || 0,
+            form_id: parseInt($('input[name="form_id"]').val(), 10) || 0,
             name: $('#wpns-form-name').val() || '',
             description: $('#wpns-form-description').val() || '',
             status: $('#wpns-form-status').val() || 'active',

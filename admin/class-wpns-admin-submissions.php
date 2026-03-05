@@ -4,14 +4,16 @@ if (!class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class WPNS_Admin_Submissions {
+class WPNS_Admin_Submissions
+{
     /**
      * Renders the Submissions admin page markup.
      *
      * Outputs the submissions list table and filter form and includes a modal
      * used to view individual submission details.
      */
-    public function render(): void {
+    public function render(): void
+    {
         $table = new WPNS_Submissions_List_Table();
         $table->prepare_items();
 
@@ -34,7 +36,8 @@ class WPNS_Admin_Submissions {
     }
 }
 
-class WPNS_Submissions_List_Table extends WP_List_Table {
+class WPNS_Submissions_List_Table extends WP_List_Table
+{
     private array $forms = [];
 
     /**
@@ -43,7 +46,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * Sets up the list table labels and behavior, then populates $this->forms with available
      * forms (id => name) for use in column rendering and filtering.
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct([
             'singular' => 'submission',
             'plural' => 'submissions',
@@ -59,16 +63,17 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * Provide column definitions for the submissions list table.
      *
      * @return array Associative array mapping column identifiers to header labels or HTML.
-     *               Keys:
-     *                 - 'cb'         => checkbox HTML for bulk actions
-     *                 - 'id'         => submission ID label
-     *                 - 'form_id'    => form name label
-     *                 - 'created_at' => submission timestamp label
-     *                 - 'ns_success' => NetSuite success status label
-     *                 - 'email_sent' => email sent status label
-     *                 - 'actions'    => actions column label
+    *  Keys:
+    *  - 'cb'         => checkbox HTML for bulk actions
+    *  - 'id'         => submission ID label
+    *  - 'form_id'    => form name label
+    *  - 'created_at' => submission timestamp label
+    *  - 'ns_success' => NetSuite success status label
+    *  - 'email_sent' => email sent status label
+    *                 - 'actions'    => actions column label
      */
-    public function get_columns(): array {
+    public function get_columns(): array
+    {
         return [
             'cb' => '<input type="checkbox" />',
             'id' => __('ID', 'wp-netsuite-forms'),
@@ -80,12 +85,13 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
         ];
     }
 
-    / **
+    /**
      * Define the bulk actions available for the list table.
      *
      * @return array An associative array mapping bulk action slugs to their display labels.
      */
-    protected function get_bulk_actions(): array {
+    protected function get_bulk_actions(): array
+    {
         return [
             'delete' => __('Delete', 'wp-netsuite-forms'),
         ];
@@ -99,7 +105,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      *
      * The method sets $this->items, pagination args (total items and per-page), and $_column_headers for rendering.
      */
-    public function prepare_items(): void {
+    public function prepare_items(): void
+    {
         $this->process_bulk_action();
 
         $per_page = 50;
@@ -133,7 +140,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * The dropdown includes an "All Forms" option and one option per known form; the currently selected form is
      * determined from the `form_id` query parameter.
      */
-    public function views(): void {
+    public function views(): void
+    {
         $current = isset($_GET['form_id']) ? absint($_GET['form_id']) : 0;
         echo '<div class="wpns-filters"><label for="wpns-filter-form">' . esc_html__('Filter by form:', 'wp-netsuite-forms') . '</label> ';
         echo '<select id="wpns-filter-form" name="form_id" onchange="this.form.submit()">';
@@ -150,7 +158,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * @param object $item The submission record; must have an `id` property.
      * @return string The HTML checkbox input markup with the submission id as its value.
      */
-    protected function column_cb($item): string {
+    protected function column_cb($item): string
+    {
         return '<input type="checkbox" name="submission_ids[]" value="' . esc_attr($item->id) . '" />';
     }
 
@@ -160,7 +169,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * @param object $item Row object representing a submission; its `form_id` property is used to look up the form name.
      * @return string The form name escaped for safe HTML output, or `'Unknown'` if the form id is not found.
      */
-    protected function column_form_id($item): string {
+    protected function column_form_id($item): string
+    {
         $form_name = $this->forms[(int) $item->form_id] ?? __('Unknown', 'wp-netsuite-forms');
         return esc_html($form_name);
     }
@@ -171,7 +181,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * @param object $item Submission record object; expected to contain an `ns_success` property.
      * @return string HTML markup for a badge with "Yes" when `ns_success` is non-empty, otherwise "No".
      */
-    protected function column_ns_success($item): string {
+    protected function column_ns_success($item): string
+    {
         return !empty($item->ns_success) ? '<span class="wpns-badge success">' . esc_html__('Yes', 'wp-netsuite-forms') . '</span>' : '<span class="wpns-badge">' . esc_html__('No', 'wp-netsuite-forms') . '</span>';
     }
 
@@ -181,7 +192,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * @param object $item Submission record object with an `email_sent` property.
      * @return string HTML markup for the column: a "Yes" badge when `email_sent` is present, otherwise a "No" badge.
      */
-    protected function column_email_sent($item): string {
+    protected function column_email_sent($item): string
+    {
         return !empty($item->email_sent) ? '<span class="wpns-badge success">' . esc_html__('Yes', 'wp-netsuite-forms') . '</span>' : '<span class="wpns-badge">' . esc_html__('No', 'wp-netsuite-forms') . '</span>';
     }
 
@@ -191,7 +203,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * @param object $item Submission record containing `id`, `submitted_data`, `netsuite_payload`, `netsuite_response`, and `error_message`.
      * @return string HTML for the "View" button (with a JSON-encoded submission payload in `data-submission`) and the "Delete" button (with `data-submission-id`).
      */
-    protected function column_actions($item): string {
+    protected function column_actions($item): string
+    {
         $data = [
             'submitted_data' => $item->submitted_data,
             'netsuite_payload' => $item->netsuite_payload,
@@ -213,7 +226,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      * @param string $column_name The column key being rendered.
      * @return string The content to display in the cell.
      */
-    protected function column_default($item, $column_name): string {
+    protected function column_default($item, $column_name): string
+    {
         switch ($column_name) {
             case 'id':
                 return (string) $item->id;
@@ -229,7 +243,8 @@ class WPNS_Submissions_List_Table extends WP_List_Table {
      *
      * The function reads `submission_ids` from POST, casts each to an integer, ignores zero/invalid IDs, and removes each valid submission.
      */
-    public function process_bulk_action(): void {
+    public function process_bulk_action(): void
+    {
         if ($this->current_action() !== 'delete') {
             return;
         }

@@ -1,10 +1,11 @@
 <?php
 
-class WPNS_Loader {
+class WPNS_Loader
+{
     private array $actions = [];
     private array $filters = [];
 
-    / **
+    /**
      * Queues a WordPress action registration for later registration.
      *
      * Stores the hook name, target component, callback method name, priority, and
@@ -15,8 +16,10 @@ class WPNS_Loader {
      * @param string $callback The method name on the component to call when the hook is fired.
      * @param int $priority Execution priority for the hook; lower values run earlier.
      * @param int $args Number of arguments the callback accepts.
-     * /
-    public function add_action(string $hook, $component, string $callback, int $priority = 10, int $args = 1): void {
+     */
+
+    public function add_action(string $hook, $component, string $callback, int $priority = 10, int $args = 1): void
+    {
         $this->actions[] = [
             'hook' => $hook,
             'component' => $component,
@@ -37,7 +40,8 @@ class WPNS_Loader {
      * @param int    $priority The priority at which the callback should be executed.
      * @param int    $args The number of arguments the callback accepts.
      */
-    public function add_filter(string $hook, $component, string $callback, int $priority = 10, int $args = 1): void {
+    public function add_filter(string $hook, $component, string $callback, int $priority = 10, int $args = 1): void
+    {
         $this->filters[] = [
             'hook' => $hook,
             'component' => $component,
@@ -54,7 +58,8 @@ class WPNS_Loader {
      * add_filter for each entry, applying the stored hook name, component/callback
      * pair, priority, and accepted argument count.
      */
-    public function run(): void {
+    public function run(): void
+    {
         foreach ($this->actions as $action) {
             add_action(
                 $action['hook'],

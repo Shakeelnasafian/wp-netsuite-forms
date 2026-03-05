@@ -58,7 +58,7 @@ class WPNS_Forms_List_Table extends WP_List_Table {
         $this->_column_headers = [$columns, $hidden, $sortable];
     }
 
-    / **
+    /**
      * Render the "Name" column for a form row, including an edit link and row action links.
      *
      * @param object $item Form record object with at least `id` and `name` properties.
