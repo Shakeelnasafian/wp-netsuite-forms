@@ -1,5 +1,254 @@
-.wpns-form-edit .wpns-shortcode {
-    margin-top: 8px;
+/* ==========================================================================
+   WP NetSuite Forms – Admin Styles (CF7-inspired)
+   ========================================================================== */
+
+/* ── App Container ───────────────────────────────────────────────────────── */
+.wpns-app {
+    max-width: 1200px;
+}
+
+/* ── Title Bar ───────────────────────────────────────────────────────────── */
+.wpns-title-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 8px;
+    flex-wrap: wrap;
+}
+
+.wpns-title-input {
+    flex: 1;
+    min-width: 200px;
+    max-width: 480px;
+    font-size: 23px !important;
+    font-weight: 400 !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+    padding: 4px 8px !important;
+    border-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #23282d !important;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.wpns-title-input:hover,
+.wpns-title-input:focus {
+    border-color: #aaa !important;
+    background: #fff !important;
+}
+
+.wpns-title-input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.wpns-title-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* ── Shortcode Bar ───────────────────────────────────────────────────────── */
+.wpns-shortcode-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f6f7f7;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 7px 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.wpns-shortcode-bar label {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.wpns-shortcode-input {
+    font-family: monospace;
+    font-size: 13px;
+    background: #fff !important;
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+    cursor: text;
+    border-color: #ccc !important;
+}
+
+.wpns-copy-confirm {
+    color: #46b450;
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* ── Save Status ─────────────────────────────────────────────────────────── */
+.wpns-save-status {
+    font-size: 13px;
+    color: #555;
+}
+
+.wpns-save-status.success {
+    color: #46b450;
+}
+
+.wpns-save-status.error {
+    color: #dc3232;
+}
+
+/* ── Tab Wrapper ─────────────────────────────────────────────────────────── */
+.wpns-app .nav-tab-wrapper {
+    padding-top: 9px;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.wpns-app .nav-tab {
+    font-size: 14px;
+    padding: 6px 16px;
+    color: #0073aa;
+}
+
+.wpns-app .nav-tab:hover {
+    background: #fff;
+    color: #0073aa;
+    border-color: #ccc;
+}
+
+.wpns-app .nav-tab-active,
+.wpns-app .nav-tab-active:hover {
+    background: #fff;
+    color: #23282d;
+    border-color: #ccc;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+
+/* ── Tab Content Panel ───────────────────────────────────────────────────── */
+.wpns-tab-content {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    padding: 20px 24px;
+    margin-bottom: 0;
+}
+
+/* ── Tag Generator Bar ───────────────────────────────────────────────────── */
+.wpns-tag-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 16px;
+}
+
+.wpns-tag-bar-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.wpns-tag-btn {
+    font-size: 12px !important;
+    padding: 3px 10px !important;
+    height: auto !important;
+    line-height: 1.6 !important;
+    background: #f7f7f7 !important;
+    border-color: #ccc !important;
+    color: #333 !important;
+    border-radius: 2px !important;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.wpns-tag-btn:hover {
+    background: #0073aa !important;
+    border-color: #006799 !important;
+    color: #fff !important;
+}
+
+.wpns-tag-btn.wpns-tag-active {
+    background: #0073aa !important;
+    border-color: #006799 !important;
+    color: #fff !important;
+}
+
+/* ── Tag Panel (Generate Tag) ────────────────────────────────────────────── */
+.wpns-tag-panel {
+    background: #f9f9f9;
+    border: 1px solid #c3c4c7;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.wpns-tag-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+    padding: 8px 16px;
+}
+
+.wpns-tag-panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    color: #23282d;
+}
+
+.wpns-tag-panel-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: #777;
+    padding: 0 2px;
+    transition: color 0.12s;
+}
+
+.wpns-tag-panel-close:hover {
+    color: #dc3232;
+}
+
+.wpns-tag-panel-body {
+    padding: 14px 16px;
+}
+
+.wpns-tag-panel .form-table th {
+    width: 130px;
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+.wpns-tag-panel .form-table td {
+    padding: 8px 10px;
+}
+
+.wpns-tag-panel-footer {
+    margin: 10px 0 0;
+}
+
+/* ── Field List ──────────────────────────────────────────────────────────── */
+.wpns-field-list-wrap {
+    margin-top: 4px;
 }
 
 #wpns-fields-list {
@@ -8,79 +257,354 @@
     padding: 0;
 }
 
-.wpns-field-row {
+.wpns-empty-state {
+    text-align: center;
+    padding: 32px 20px;
+    color: #888;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    margin: 8px 0 0;
+}
+
+.wpns-empty-state p {
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ── Field Item Card ─────────────────────────────────────────────────────── */
+.wpns-field-item {
+    border: 1px solid #ddd;
+    border-radius: 3px;
     background: #fff;
-    border: 1px solid #ccd0d4;
-    padding: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    transition: box-shadow 0.15s, border-color 0.15s;
 }
 
-.wpns-field-row-header {
+.wpns-field-item:hover {
+    border-color: #aaa;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.wpns-field-item.wpns-field-open {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+}
+
+/* ── Field Header ────────────────────────────────────────────────────────── */
+.wpns-field-header {
     display: flex;
-    gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
-}
-
-.wpns-field-row-header input,
-.wpns-field-row-header select {
-    min-width: 140px;
-}
-
-.wpns-field-row-body {
-    display: flex;
     gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    background: #fdfdfd;
+    border-radius: 3px;
 }
 
-.wpns-field-options {
+.wpns-field-item.wpns-field-open .wpns-field-header {
+    background: #f0f6fc;
+    border-radius: 3px 3px 0 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.wpns-drag-handle {
+    color: #bbb;
+    cursor: grab;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: color 0.12s;
+}
+
+.wpns-drag-handle:hover {
+    color: #777;
+}
+
+.wpns-drag-handle:active {
+    cursor: grabbing;
+}
+
+.wpns-field-summary {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.wpns-field-label-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #23282d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+.wpns-field-label-text.wpns-no-label {
+    color: #aaa;
+    font-style: italic;
+    font-weight: 400;
+}
+
+.wpns-type-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    background: #e8f0fe;
+    color: #1967d2;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.wpns-required-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    background: #fce8e6;
+    color: #c5221f;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.wpns-field-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    font-size: 12px;
+}
+
+.wpns-field-ctrl .wpns-toggle-field {
+    color: #0073aa;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 12px;
+}
+
+.wpns-field-ctrl .wpns-toggle-field:hover {
+    text-decoration: underline;
+}
+
+.wpns-field-ctrl .wpns-remove-field {
+    color: #b32d2e;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.wpns-field-ctrl .wpns-remove-field:hover {
+    text-decoration: underline;
+}
+
+.wpns-field-ctrl-sep {
+    color: #ddd;
+    font-size: 11px;
+}
+
+/* ── Field Body (Expanded) ───────────────────────────────────────────────── */
+.wpns-field-body {
+    display: none;
+    padding: 16px 14px;
+    background: #fff;
+}
+
+.wpns-field-body-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.wpns-fg {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wpns-fg label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.wpns-fg input[type="text"],
+.wpns-fg select {
     width: 100%;
-    margin-top: 10px;
-    padding: 10px;
-    background: #f6f7f7;
-    border: 1px dashed #ccd0d4;
+}
+
+/* ── Field Options ───────────────────────────────────────────────────────── */
+.wpns-field-options {
+    border-top: 1px solid #eee;
+    padding-top: 14px;
+    margin-top: 2px;
+}
+
+.wpns-field-options h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    margin: 0 0 10px;
+}
+
+.wpns-options-list {
+    margin-bottom: 8px;
 }
 
 .wpns-option-row {
     display: flex;
     gap: 8px;
     margin-bottom: 6px;
+    align-items: center;
 }
 
 .wpns-option-row input {
-    min-width: 160px;
+    flex: 1;
+    min-width: 80px;
 }
 
-.wpns-required {
+.wpns-remove-option {
+    color: #b32d2e !important;
+    white-space: nowrap;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.wpns-remove-option:hover {
+    text-decoration: underline;
+}
+
+/* ── Mail Tab Layout ─────────────────────────────────────────────────────── */
+.wpns-mail-layout {
     display: flex;
-    align-items: center;
-    gap: 4px;
+    gap: 24px;
+    align-items: flex-start;
 }
 
-.wpns-payload-toolbar {
-    margin-top: 8px;
+.wpns-mail-main {
+    flex: 1;
+    min-width: 0;
 }
 
+.wpns-mail-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+}
+
+/* ── Sidebar Postbox ─────────────────────────────────────────────────────── */
+.wpns-sidebar-box {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.wpns-sidebar-box-header {
+    background: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+    padding: 8px 14px;
+}
+
+.wpns-sidebar-box-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    color: #23282d;
+}
+
+.wpns-sidebar-box-body {
+    padding: 12px 14px;
+}
+
+.wpns-sidebar-box-body p {
+    font-size: 12px;
+    color: #555;
+    margin: 0 0 8px;
+}
+
+/* ── Mail Token List ─────────────────────────────────────────────────────── */
 .wpns-token-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.wpns-email-token {
+    font-family: monospace;
+    font-size: 11px !important;
+    padding: 2px 7px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    background: #f7f7f7 !important;
+    border-color: #ccc !important;
+    color: #333 !important;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.wpns-email-token:hover {
+    background: #0073aa !important;
+    border-color: #006799 !important;
+    color: #fff !important;
+}
+
+/* ── Payload / NetSuite ──────────────────────────────────────────────────── */
+.wpns-payload-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 8px;
+    align-items: center;
 }
 
-.wpns-token-list .button-link {
-    margin-right: 6px;
+.wpns-static-table {
+    margin: 0 0 8px;
 }
 
-.wpns-static-table input {
+.wpns-static-table td input {
     width: 100%;
 }
 
+.wpns-test-result {
+    margin-left: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.wpns-test-result.success { color: #46b450; }
+.wpns-test-result.error   { color: #dc3232; }
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
 .wpns-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -89,27 +613,122 @@
 
 .wpns-modal-content {
     background: #fff;
-    padding: 20px;
+    padding: 24px;
     max-width: 800px;
     width: 90%;
     max-height: 80vh;
     overflow: auto;
     position: relative;
+    border-radius: 3px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.wpns-modal-content h2 {
+    margin-top: 0;
+    font-size: 18px;
 }
 
 .wpns-modal-pre {
     background: #f6f7f7;
-    padding: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 50vh;
+    overflow: auto;
 }
 
+.wpns-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #777;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.12s;
+}
+
+.wpns-modal-close:hover {
+    color: #dc3232;
+}
+
+/* ── Status Badges (Forms List) ──────────────────────────────────────────── */
+.wpns-status-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.wpns-status-badge.active {
+    background: #edf7ee;
+    color: #1e7e34;
+    border: 1px solid #c3e6cb;
+}
+
+.wpns-status-badge.inactive {
+    background: #fff5f5;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ── Credentials Page ────────────────────────────────────────────────────── */
+.wpns-credentials h1 {
+    margin-bottom: 12px;
+}
+
+.wpns-credentials .widefat th,
+.wpns-credentials .widefat td {
+    vertical-align: middle;
+}
+
+/* ── Submissions ─────────────────────────────────────────────────────────── */
 .wpns-badge {
     display: inline-block;
     padding: 2px 8px;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #ddd;
+    color: #555;
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .wpns-badge.success {
     background: #46b450;
     color: #fff;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .wpns-mail-layout {
+        flex-direction: column;
+    }
+
+    .wpns-mail-sidebar {
+        width: 100%;
+    }
+
+    .wpns-field-body-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .wpns-field-body-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .wpns-title-input {
+        font-size: 18px !important;
+    }
 }

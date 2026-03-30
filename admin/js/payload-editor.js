@@ -48,7 +48,7 @@ jQuery(function($) {
     $('#wpns-preview-json').on('click', function() {
         var template = $('#wpns-payload-template').val() || '{}';
         var sampleMap = {};
-        $('#wpns-fields-list .wpns-field-row').not('.wpns-field-template').each(function() {
+        $('#wpns-fields-list .wpns-field-item').not('.wpns-field-template').each(function() {
             var name = $(this).find('.wpns-field-name').val();
             if (name) {
                 sampleMap[name] = 'sample_' + name;
@@ -71,7 +71,8 @@ jQuery(function($) {
         if (!$modal.length) {
             $modal = $('<div id="wpns-preview-modal" class="wpns-modal" style="display:none;">'
                 + '<div class="wpns-modal-content">'
-                + '<button type="button" class="button-link wpns-modal-close">Close</button>'
+                + '<h2>Payload Preview</h2>'
+                + '<button type="button" class="wpns-modal-close" aria-label="Close">&times;</button>'
                 + '<pre class="wpns-modal-pre"></pre>'
                 + '</div></div>');
             $('body').append($modal);

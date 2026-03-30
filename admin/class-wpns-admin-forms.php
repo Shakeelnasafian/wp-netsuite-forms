@@ -95,7 +95,9 @@ class WPNS_Forms_List_Table extends WP_List_Table {
             case 'id':
                 return (string) $item->id;
             case 'status':
-                return esc_html($item->status);
+                $cls = $item->status === 'active' ? 'active' : 'inactive';
+                return '<span class="wpns-status-badge ' . esc_attr($cls) . '">'
+                    . esc_html(ucfirst($item->status)) . '</span>';
             case 'created_at':
                 return esc_html($item->created_at);
             default:
