@@ -27,7 +27,8 @@ class WPNS_Admin_Submissions
 
         echo '<div id="wpns-submission-modal" class="wpns-modal" style="display:none;">';
         echo '<div class="wpns-modal-content">';
-        echo '<button type="button" class="button-link wpns-modal-close">' . esc_html__('Close', 'wp-netsuite-forms') . '</button>';
+        echo '<h2>' . esc_html__( 'Submission Details', 'wp-netsuite-forms' ) . '</h2>';
+        echo '<button type="button" class="wpns-modal-close" aria-label="' . esc_attr__( 'Close', 'wp-netsuite-forms' ) . '">&times;</button>';
         echo '<pre class="wpns-modal-pre"></pre>';
         echo '</div>';
         echo '</div>';

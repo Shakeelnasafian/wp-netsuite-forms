@@ -39,6 +39,21 @@ jQuery(function($) {
         }
     });
 
+    function resetForm() {
+        fillForm({ id: 0, profile_name: '', account_id: '', realm: '', consumer_key: '', consumer_secret: '', token_key: '', token_secret: '', script_id: '', deploy_id: '1' });
+        $('#wpns-credential-form-title').text('Add New Credential');
+        $('.wpns-credential-status').text('');
+        // Reset all secret fields back to password type
+        $('#wpns-credential-form input[type="text"][id^="wpns-consumer"], #wpns-credential-form input[type="text"][id^="wpns-token"]').each(function() {
+            $(this).attr('type', 'password');
+        });
+        $('.wpns-toggle-secret').text('Show');
+    }
+
+    $(document).on('click', '#wpns-reset-credential', function() {
+        resetForm();
+    });
+
     $(document).on('click', '.wpns-edit-credential', function() {
         var $row = $(this).closest('tr');
         var raw = $row.attr('data-credential');
@@ -48,6 +63,10 @@ jQuery(function($) {
         try {
             var cred = JSON.parse(raw);
             fillForm(cred);
+            $('#wpns-credential-form-title').text('Edit Credential: ' + (cred.profile_name || ''));
+            $('.wpns-credential-status').text('');
+            // Scroll to form
+            $('html, body').animate({ scrollTop: $('#wpns-credential-form-title').offset().top - 40 }, 300);
         } catch (e) {
             alert('Failed to load credential data.');
         }
@@ -75,7 +94,7 @@ jQuery(function($) {
 
         $.post(wpns_admin.ajax_url, data).done(function(res) {
             if (res.success) {
-                $status.text('Saved.');
+                $status.text('Saved successfully.');
                 location.reload();
             } else {
                 $status.text(res.data && res.data.message ? res.data.message : 'Save failed.');
