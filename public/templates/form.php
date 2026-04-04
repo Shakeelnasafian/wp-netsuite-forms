@@ -58,7 +58,17 @@
              data-field-name="<?php echo esc_attr( $name ); ?>"
              <?php echo $condition_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 
-            <label for="wpns-field-<?php echo esc_attr( $name ); ?>">
+            <?php
+            // radio/checkbox groups: label points to the first item (id="wpns-field-{name}-0").
+            $label_for = in_array( $type, [ 'radio', 'checkbox' ], true )
+                ? 'wpns-field-' . $name . '-0'
+                : 'wpns-field-' . $name;
+            // radio groups also carry an id for aria-labelledby on the radiogroup div.
+            $label_id_attr = ( $type === 'radio' )
+                ? ' id="wpns-field-' . esc_attr( $name ) . '-label"'
+                : '';
+            ?>
+            <label for="<?php echo esc_attr( $label_for ); ?>"<?php echo $label_id_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
                 <?php echo esc_html( $label ); ?>
                 <?php if ( $required ) : ?>
                     <span class="wpns-required-star" aria-hidden="true">*</span>
@@ -113,20 +123,22 @@
             <?php elseif ( $type === 'radio' ) : ?>
 
                 <div class="wpns-options" role="radiogroup"
-                     aria-label="<?php echo esc_attr( $label ); ?>">
-                    <?php foreach ( $options as $opt ) :
+                     aria-labelledby="wpns-field-<?php echo esc_attr( $name ); ?>-label">
+                    <?php $radio_idx = 0; foreach ( $options as $opt ) :
                         $opt_label = $opt['label'] ?? '';
                         $opt_value = $opt['value'] ?? '';
                     ?>
                         <label>
                             <input type="radio"
+                                   <?php if ( $radio_idx === 0 ) : ?>id="wpns-field-<?php echo esc_attr( $name ); ?>-0"<?php endif; ?>
                                    name="<?php echo esc_attr( $name ); ?>"
                                    value="<?php echo esc_attr( $opt_value ); ?>"
                                    data-label="<?php echo esc_attr( $label ); ?>"
                                    <?php checked( $default, $opt_value ); ?>
-                                   <?php echo $required ? 'required' : ''; ?>>
+                                   <?php echo $required ? 'required aria-required="true"' : ''; ?>>
                             <?php echo esc_html( $opt_label ); ?>
                         </label>
+                        <?php $radio_idx++; ?>
                     <?php endforeach; ?>
                 </div>
 
@@ -136,13 +148,15 @@
                     <?php $idx = 0; foreach ( $options as $opt ) :
                         $opt_label = $opt['label'] ?? '';
                         $opt_value = $opt['value'] ?? '';
+                        $cb_id     = 'wpns-field-' . $name . '-' . $idx;
                     ?>
-                        <label>
+                        <label for="<?php echo esc_attr( $cb_id ); ?>">
                             <input type="checkbox"
+                                   id="<?php echo esc_attr( $cb_id ); ?>"
                                    name="<?php echo esc_attr( $name ); ?>[]"
                                    value="<?php echo esc_attr( $opt_value ); ?>"
                                    data-label="<?php echo esc_attr( $label ); ?>"
-                                   <?php echo ( $required && $idx === 0 ) ? 'required' : ''; ?>>
+                                   <?php echo ( $required && $idx === 0 ) ? 'required aria-required="true"' : ''; ?>>
                             <?php echo esc_html( $opt_label ); ?>
                         </label>
                         <?php $idx++; ?>

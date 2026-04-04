@@ -40,7 +40,18 @@ class WPNS_Admin_Credentials {
                 $crm_label = self::CRM_LABELS[ $crm_type ] ?? ucfirst( $crm_type );
                 $conn_info = $crm_type === 'netsuite' ? esc_html( $cred->account_id ?? '' ) : '—';
 
-                echo '<tr data-credential="' . esc_attr( wp_json_encode( $cred ) ) . '">';
+                // Only expose non-sensitive fields to the DOM.
+                $safe_cred = [
+                    'id'           => $cred->id,
+                    'crm_type'     => $cred->crm_type     ?? 'netsuite',
+                    'profile_name' => $cred->profile_name ?? '',
+                    'account_id'   => $cred->account_id   ?? '',
+                    'realm'        => $cred->realm         ?? '',
+                    'script_id'    => $cred->script_id    ?? '',
+                    'deploy_id'    => $cred->deploy_id    ?? '1',
+                    // config_json intentionally omitted (may contain API keys/tokens).
+                ];
+                echo '<tr data-credential="' . esc_attr( wp_json_encode( $safe_cred ) ) . '">';
                 echo '<td><strong>' . esc_html( $cred->profile_name ) . '</strong></td>';
                 echo '<td><span class="wpns-crm-badge wpns-crm-' . esc_attr( $crm_type ) . '">'
                     . esc_html( $crm_label ) . '</span></td>';
@@ -248,7 +259,7 @@ class WPNS_Admin_Credentials {
             . esc_html__( 'Save Connection', 'wp-netsuite-forms' ) . '</button>';
         echo ' <button type="button" class="button" id="wpns-reset-credential">'
             . esc_html__( 'Cancel', 'wp-netsuite-forms' ) . '</button>';
-        echo ' <span class="wpns-credential-status"></span>';
+        echo ' <span class="wpns-credential-status" role="status" aria-live="polite" aria-atomic="true"></span>';
         echo '</p>';
 
         echo '</form>';

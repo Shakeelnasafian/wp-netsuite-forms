@@ -97,13 +97,26 @@ jQuery( function ( $ ) {
     $( document ).on( 'click', '.wpns-copy-shortcode', function () {
         var $input  = $( '.wpns-shortcode-input' );
         var $notice = $( '.wpns-copy-confirm' );
+        var text    = $input.val();
 
-        $input[0].select();
-        try {
-            document.execCommand( 'copy' );
-            $notice.stop( true, true ).show().delay( 2000 ).fadeOut();
-        } catch ( err ) {
-            $input[0].focus();
+        // Prefer modern async Clipboard API; fall back to execCommand for older browsers.
+        if ( navigator.clipboard && navigator.clipboard.writeText ) {
+            navigator.clipboard.writeText( text )
+                .then( function () {
+                    $notice.stop( true, true ).show().delay( 2000 ).fadeOut();
+                } )
+                .catch( function () {
+                    $input[0].select();
+                    $input[0].focus();
+                } );
+        } else {
+            $input[0].select();
+            try {
+                document.execCommand( 'copy' ); // eslint-disable-line no-deprecated
+                $notice.stop( true, true ).show().delay( 2000 ).fadeOut();
+            } catch ( err ) {
+                $input[0].focus();
+            }
         }
     } );
 
@@ -463,13 +476,16 @@ jQuery( function ( $ ) {
                         $( 'input[name="form_id"]' ).val( res.data.form_id );
                         $( '.wpns-shortcode-input' ).val( shortcode );
                         if ( $( '.wpns-shortcode-bar' ).length === 0 ) {
-                            var barHtml = '<div class="wpns-shortcode-bar">'
-                                + '<label>Shortcode:</label>'
-                                + '<input type="text" class="wpns-shortcode-input" readonly value="' + shortcode + '">'
-                                + '<button type="button" class="button wpns-copy-shortcode">Copy</button>'
-                                + '<span class="wpns-copy-confirm" style="display:none;">Copied!</span>'
-                                + '</div>';
-                            $( '.wpns-title-bar' ).after( barHtml );
+                            // Build with jQuery to safely set the value (avoids attr-quoting issues).
+                            var $bar = $( '<div class="wpns-shortcode-bar"></div>' )
+                                .append( $( '<label></label>' ).text( 'Shortcode:' ) )
+                                .append(
+                                    $( '<input type="text" class="wpns-shortcode-input" readonly>' )
+                                        .val( shortcode )
+                                )
+                                .append( $( '<button type="button" class="button wpns-copy-shortcode">Copy</button>' ) )
+                                .append( $( '<span class="wpns-copy-confirm" style="display:none;">Copied!</span>' ) );
+                            $( '.wpns-title-bar' ).after( $bar );
                         }
                         // Update browser URL without reload
                         var newUrl = window.location.href;

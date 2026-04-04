@@ -74,6 +74,7 @@
 .wpns-form input[type="email"]:focus,
 .wpns-form input[type="tel"]:focus,
 .wpns-form input[type="number"]:focus,
+.wpns-form input[type="file"]:focus,
 .wpns-form textarea:focus,
 .wpns-form select:focus {
     border-color: #0073aa;

@@ -418,8 +418,8 @@ class WPNS_Admin_Form_Edit {
         $label_extra_cls  = $field_label ? '' : ' wpns-no-label';
         $req_hidden_style = $is_required ? '' : ' style="display:none;"';
 
-        $no_options_types = [ 'select', 'radio', 'checkbox' ];
-        $opts_hidden      = in_array( $field_type, $no_options_types, true ) ? '' : ' style="display:none;"';
+        $types_with_options = [ 'select', 'radio', 'checkbox' ];
+        $opts_hidden        = in_array( $field_type, $types_with_options, true ) ? '' : ' style="display:none;"';
 
         echo '<li class="' . esc_attr( $classes ) . '"' . $style . '>';
 

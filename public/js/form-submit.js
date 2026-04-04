@@ -141,7 +141,10 @@ jQuery( function ( $ ) {
 
                 success: function ( res ) {
                     if ( res.success ) {
-                        $resp.html( '<div class="wpns-response-success">' + res.data.message + '</div>' );
+                        // Use .text() to prevent XSS from server-returned message content.
+                        $resp.empty().append(
+                            $( '<div class="wpns-response-success"></div>' ).text( res.data.message )
+                        );
                         $form[0].reset();
                         evaluateConditions( $form ); // re-evaluate after reset
                         if ( res.data.redirect_url ) {
@@ -151,7 +154,10 @@ jQuery( function ( $ ) {
                         if ( res.data && res.data.errors ) {
                             var extra = [];
                             $.each( res.data.errors, function ( fieldName, message ) {
-                                var $el = $form.find( '[name="' + fieldName + '"]' ).first();
+                                // Match both plain name and array-style name (e.g. checkbox[]).
+                                var $el = $form.find(
+                                    '[name="' + fieldName + '"], [name="' + fieldName + '[]"]'
+                                ).first();
                                 if ( $el.length ) {
                                     showFieldError( $el, message );
                                 } else {
@@ -159,7 +165,13 @@ jQuery( function ( $ ) {
                                 }
                             } );
                             if ( extra.length ) {
-                                $resp.html( '<div class="wpns-response-error">' + extra.join( '<br>' ) + '</div>' );
+                                // Build error list without innerHTML string concatenation.
+                                var $errDiv = $( '<div class="wpns-response-error"></div>' );
+                                extra.forEach( function ( m, i ) {
+                                    if ( i > 0 ) { $errDiv.append( '<br>' ); }
+                                    $errDiv.append( document.createTextNode( m ) );
+                                } );
+                                $resp.empty().append( $errDiv );
                             }
                             var $firstErr = $form.find( '.wpns-field-invalid' ).first();
                             if ( $firstErr.length ) {
@@ -167,13 +179,17 @@ jQuery( function ( $ ) {
                             }
                         } else {
                             var msg = ( res.data && res.data.message ) ? res.data.message : 'An error occurred. Please try again.';
-                            $resp.html( '<div class="wpns-response-error">' + msg + '</div>' );
+                            $resp.empty().append(
+                                $( '<div class="wpns-response-error"></div>' ).text( msg )
+                            );
                         }
                     }
                 },
 
                 error: function () {
-                    $resp.html( '<div class="wpns-response-error">Network error. Please try again.</div>' );
+                    $resp.empty().append(
+                        $( '<div class="wpns-response-error"></div>' ).text( 'Network error. Please try again.' )
+                    );
                 },
 
                 complete: function () {

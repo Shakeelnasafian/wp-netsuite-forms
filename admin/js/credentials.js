@@ -83,9 +83,10 @@ jQuery( function ( $ ) {
             fillForm( cred );
             $( '#wpns-credential-form-title' ).text( 'Edit Connection: ' + ( cred.profile_name || '' ) );
             $( '.wpns-credential-status' ).text( '' );
-            $( 'html, body' ).animate( {
-                scrollTop: $( '#wpns-credential-form-title' ).offset().top - 40,
-            }, 300 );
+            var $title = $( '#wpns-credential-form-title' );
+            if ( $title.length ) {
+                $( 'html, body' ).animate( { scrollTop: $title.offset().top - 40 }, 300 );
+            }
         } catch ( e ) {
             alert( 'Failed to load credential data.' );
         }
