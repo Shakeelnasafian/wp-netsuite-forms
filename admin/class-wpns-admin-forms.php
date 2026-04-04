@@ -34,11 +34,13 @@ class WPNS_Forms_List_Table extends WP_List_Table {
      */
     public function get_columns(): array {
         return [
-            'id' => __('ID', 'wp-netsuite-forms'),
-            'name' => __('Name', 'wp-netsuite-forms'),
-            'status' => __('Status', 'wp-netsuite-forms'),
-            'shortcode' => __('Shortcode', 'wp-netsuite-forms'),
-            'created_at' => __('Created', 'wp-netsuite-forms'),
+            'id'           => __( 'ID',          'wp-netsuite-forms' ),
+            'name'         => __( 'Name',         'wp-netsuite-forms' ),
+            'status'       => __( 'Status',       'wp-netsuite-forms' ),
+            'submissions'  => __( 'Submissions',  'wp-netsuite-forms' ),
+            'last_sub'     => __( 'Last Activity','wp-netsuite-forms' ),
+            'shortcode'    => __( 'Shortcode',    'wp-netsuite-forms' ),
+            'created_at'   => __( 'Created',      'wp-netsuite-forms' ),
         ];
     }
 
@@ -90,14 +92,38 @@ class WPNS_Forms_List_Table extends WP_List_Table {
      * @param string $column_name The column identifier.
      * @return string The cell content: the form `id` as a string for `id`, the escaped `status` for `status`, the escaped `created_at` for `created_at`, or an empty string for unknown columns.
      */
-    protected function column_default($item, $column_name): string {
-        switch ($column_name) {
+    protected function column_default( $item, $column_name ): string {
+        switch ( $column_name ) {
             case 'id':
                 return (string) $item->id;
+
             case 'status':
-                return esc_html($item->status);
+                $cls = $item->status === 'active' ? 'active' : 'inactive';
+                return '<span class="wpns-status-badge ' . esc_attr( $cls ) . '">'
+                    . esc_html( ucfirst( $item->status ) ) . '</span>';
+
+            case 'submissions': {
+                $count    = WPNS_Submission_Model::count_by_form( (int) $item->id );
+                $sub_url  = admin_url( 'admin.php?page=wpns-submissions&form_id=' . $item->id );
+                $failed   = WPNS_Submission_Model::count_ns_failed( (int) $item->id );
+                $out      = '<a href="' . esc_url( $sub_url ) . '">' . esc_html( $count ) . '</a>';
+                if ( $failed > 0 ) {
+                    $out .= ' <span class="wpns-badge wpns-badge-warn" title="'
+                        . esc_attr( sprintf( __( '%d CRM push failed', 'wp-netsuite-forms' ), $failed ) )
+                        . '">' . esc_html( $failed ) . ' failed</span>';
+                }
+                return $out;
+            }
+
+            case 'last_sub': {
+                $date = WPNS_Submission_Model::get_last_submission_date( (int) $item->id );
+                return $date ? esc_html( human_time_diff( strtotime( $date ) ) . ' ago' )
+                             : '<span style="color:#aaa;">—</span>';
+            }
+
             case 'created_at':
-                return esc_html($item->created_at);
+                return esc_html( $item->created_at );
+
             default:
                 return '';
         }

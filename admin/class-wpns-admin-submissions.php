@@ -18,7 +18,20 @@ class WPNS_Admin_Submissions
         $table->prepare_items();
 
         echo '<div class="wrap wpns-submissions">';
-        echo '<h1>' . esc_html__('Submissions', 'wp-netsuite-forms') . '</h1>';
+        echo '<h1 class="wp-heading-inline">' . esc_html__( 'Submissions', 'wp-netsuite-forms' ) . '</h1>';
+        echo '<hr class="wp-header-end">';
+
+        // CSV export link.
+        $form_filter = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
+        if ( $form_filter ) {
+            $csv_url = wp_nonce_url(
+                admin_url( 'admin-post.php?action=wpns_export_csv&form_id=' . $form_filter ),
+                'wpns_export_csv'
+            );
+            echo '<a href="' . esc_url( $csv_url ) . '" class="button" style="margin-bottom:10px;">'
+                . esc_html__( 'Export CSV', 'wp-netsuite-forms' ) . '</a> ';
+        }
+
         echo '<form method="get">';
         echo '<input type="hidden" name="page" value="wpns-submissions">';
         $table->views();
@@ -27,7 +40,8 @@ class WPNS_Admin_Submissions
 
         echo '<div id="wpns-submission-modal" class="wpns-modal" style="display:none;">';
         echo '<div class="wpns-modal-content">';
-        echo '<button type="button" class="button-link wpns-modal-close">' . esc_html__('Close', 'wp-netsuite-forms') . '</button>';
+        echo '<h2>' . esc_html__( 'Submission Details', 'wp-netsuite-forms' ) . '</h2>';
+        echo '<button type="button" class="wpns-modal-close" aria-label="' . esc_attr__( 'Close', 'wp-netsuite-forms' ) . '">&times;</button>';
         echo '<pre class="wpns-modal-pre"></pre>';
         echo '</div>';
         echo '</div>';
@@ -203,18 +217,31 @@ class WPNS_Submissions_List_Table extends WP_List_Table
      * @param object $item Submission record containing `id`, `submitted_data`, `netsuite_payload`, `netsuite_response`, and `error_message`.
      * @return string HTML for the "View" button (with a JSON-encoded submission payload in `data-submission`) and the "Delete" button (with `data-submission-id`).
      */
-    protected function column_actions($item): string
+    protected function column_actions( $item ): string
     {
         $data = [
-            'submitted_data' => $item->submitted_data,
-            'netsuite_payload' => $item->netsuite_payload,
+            'submitted_data'    => $item->submitted_data,
+            'netsuite_payload'  => $item->netsuite_payload,
             'netsuite_response' => $item->netsuite_response,
-            'error_message' => $item->error_message,
+            'error_message'     => $item->error_message,
         ];
-        $json = esc_attr(wp_json_encode($data));
+        $json = esc_attr( wp_json_encode( $data ) );
 
-        return '<button type="button" class="button wpns-view-submission" data-submission="' . $json . '">' . esc_html__('View', 'wp-netsuite-forms') . '</button> '
-            . '<button type="button" class="button-link-delete wpns-delete-submission" data-submission-id="' . esc_attr($item->id) . '">' . esc_html__('Delete', 'wp-netsuite-forms') . '</button>';
+        $out = '<button type="button" class="button wpns-view-submission" data-submission="' . $json . '">'
+            . esc_html__( 'View', 'wp-netsuite-forms' ) . '</button> ';
+
+        // Show Retry button when CRM push failed and a payload exists.
+        if ( empty( $item->ns_success ) && ! empty( $item->netsuite_payload ) && $item->netsuite_payload !== '""' ) {
+            $out .= '<button type="button" class="button wpns-retry-submission"'
+                . ' data-submission-id="' . esc_attr( $item->id ) . '">'
+                . esc_html__( 'Retry CRM', 'wp-netsuite-forms' ) . '</button> ';
+        }
+
+        $out .= '<button type="button" class="button-link-delete wpns-delete-submission"'
+            . ' data-submission-id="' . esc_attr( $item->id ) . '">'
+            . esc_html__( 'Delete', 'wp-netsuite-forms' ) . '</button>';
+
+        return $out;
     }
 
     /**

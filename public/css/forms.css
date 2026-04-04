@@ -1,17 +1,34 @@
+/* ==========================================================================
+   WP NetSuite Forms – Public Form Styles (CF7-inspired)
+   ========================================================================== */
+
 .wpns-form {
     max-width: 640px;
-    margin: 20px auto;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #333;
 }
 
+/* ── Fields ─────────────────────────────────────────────────────────────── */
+
 .wpns-form .wpns-field {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .wpns-form label {
     display: block;
+    font-size: 14px;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
+    color: #23282d;
 }
+
+.wpns-required-star {
+    color: #dc3232;
+    margin-left: 2px;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────────── */
 
 .wpns-form input[type="text"],
 .wpns-form input[type="email"],
@@ -20,50 +37,187 @@
 .wpns-form input[type="file"],
 .wpns-form textarea,
 .wpns-form select {
+    display: block;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 9px 12px;
+    font-size: 15px;
+    color: #333;
+    background: #fff;
+    border: 2px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-.wpns-form .wpns-error {
-    border-color: #d63638;
+.wpns-form input[type="file"] {
+    padding: 6px 8px;
+    cursor: pointer;
 }
 
-.wpns-response {
-    margin-top: 10px;
+.wpns-form select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23555' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px 7px;
+    padding-right: 36px;
 }
 
-.wpns-success {
-    background: #d1e7dd;
-    color: #0f5132;
-    padding: 10px;
-    border-radius: 4px;
+.wpns-form textarea {
+    min-height: 120px;
+    resize: vertical;
 }
 
-.wpns-error-msg {
-    background: #f8d7da;
-    color: #842029;
-    padding: 10px;
-    border-radius: 4px;
+/* Focus states */
+.wpns-form input[type="text"]:focus,
+.wpns-form input[type="email"]:focus,
+.wpns-form input[type="tel"]:focus,
+.wpns-form input[type="number"]:focus,
+.wpns-form input[type="file"]:focus,
+.wpns-form textarea:focus,
+.wpns-form select:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
+    outline: none;
+}
+
+/* Error state */
+.wpns-form input.wpns-field-invalid,
+.wpns-form textarea.wpns-field-invalid,
+.wpns-form select.wpns-field-invalid {
+    border-color: #dc3232;
+    box-shadow: 0 0 0 2px rgba(220, 50, 50, 0.15);
+}
+
+/* ── Radio & Checkbox Groups ─────────────────────────────────────────────── */
+
+.wpns-form .wpns-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.wpns-form .wpns-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.wpns-form .wpns-options input[type="radio"],
+.wpns-form .wpns-options input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #0073aa;
+}
+
+/* ── Per-field Inline Error ──────────────────────────────────────────────── */
+
+.wpns-field-error {
+    display: none;
+    font-size: 13px;
+    color: #dc3232;
+    margin-top: 5px;
+}
+
+.wpns-field-error.visible {
+    display: block;
+}
+
+/* ── Submit Button ───────────────────────────────────────────────────────── */
+
+.wpns-submit-wrap {
+    margin-top: 8px;
 }
 
 .wpns-form .wpns-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background: #0073aa;
     color: #fff;
     border: none;
-    padding: 10px 24px;
+    padding: 10px 26px;
     border-radius: 4px;
     font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
+    transition: background 0.15s ease;
+    line-height: 1.4;
 }
 
 .wpns-form .wpns-submit:hover {
     background: #005d8c;
 }
 
+.wpns-form .wpns-submit:active {
+    background: #00507a;
+}
+
 .wpns-form .wpns-submit:disabled {
-    opacity: 0.6;
+    opacity: 0.65;
     cursor: not-allowed;
+}
+
+/* ── Loading Spinner ─────────────────────────────────────────────────────── */
+
+.wpns-spinner {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: wpns-spin 0.65s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes wpns-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Response Messages ───────────────────────────────────────────────────── */
+
+.wpns-response {
+    margin-top: 16px;
+}
+
+.wpns-response-success {
+    background: #edf7ee;
+    color: #1e5c28;
+    border: 1px solid #b7dfbc;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.wpns-response-error {
+    background: #fff5f5;
+    color: #7a1e24;
+    border: 1px solid #f5c6cb;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Legacy class aliases (backwards-compat) */
+.wpns-success  { background: #edf7ee; color: #1e5c28; border: 1px solid #b7dfbc; padding: 12px 16px; border-radius: 4px; font-size: 14px; }
+.wpns-error-msg { background: #fff5f5; color: #7a1e24; border: 1px solid #f5c6cb; padding: 12px 16px; border-radius: 4px; font-size: 14px; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+    .wpns-form .wpns-submit {
+        width: 100%;
+        justify-content: center;
+    }
 }

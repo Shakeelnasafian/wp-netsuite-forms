@@ -32,9 +32,11 @@ class WPNS_Field_Model {
                 $options_json = (string) $field['options_json'];
             }
 
+            $condition_json = isset( $field['condition_json'] ) ? (string) $field['condition_json'] : '';
+
             $sql = $wpdb->prepare(
-                "INSERT INTO $table (form_id, field_name, field_label, field_type, placeholder, default_val, options_json, is_required, css_class, sort_order)
-                 VALUES (%d, %s, %s, %s, %s, %s, %s, %d, %s, %d)",
+                "INSERT INTO $table (form_id, field_name, field_label, field_type, placeholder, default_val, options_json, condition_json, is_required, css_class, sort_order)
+                 VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %d, %s, %d)",
                 $form_id,
                 $field['field_name'] ?? '',
                 $field['field_label'] ?? '',
@@ -42,9 +44,10 @@ class WPNS_Field_Model {
                 $field['placeholder'] ?? '',
                 $field['default_val'] ?? '',
                 $options_json,
-                !empty($field['is_required']) ? 1 : 0,
+                $condition_json,
+                ! empty( $field['is_required'] ) ? 1 : 0,
                 $field['css_class'] ?? '',
-                isset($field['sort_order']) ? (int) $field['sort_order'] : 0
+                isset( $field['sort_order'] ) ? (int) $field['sort_order'] : 0
             );
 
             $result = $wpdb->query($sql);
