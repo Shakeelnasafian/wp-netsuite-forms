@@ -61,7 +61,7 @@ class WPNS_Admin_Form_Edit {
         echo '<a href="#" class="nav-tab" data-tab="mail">'
             . esc_html__( 'Mail', 'wp-netsuite-forms' ) . '</a>';
         echo '<a href="#" class="nav-tab" data-tab="mapping">'
-            . esc_html__( 'NetSuite', 'wp-netsuite-forms' ) . '</a>';
+            . esc_html__( 'CRM Integration', 'wp-netsuite-forms' ) . '</a>';
         echo '<a href="#" class="nav-tab" data-tab="settings">'
             . esc_html__( 'Settings', 'wp-netsuite-forms' ) . '</a>';
         echo '</h2>';
@@ -243,20 +243,28 @@ class WPNS_Admin_Form_Edit {
         echo '</div>'; // [data-tab="mail"]
 
         // ══════════════════════════════════════════════════════════════════
-        // Tab: NetSuite
+        // Tab: CRM Integration
         // ══════════════════════════════════════════════════════════════════
         echo '<div class="wpns-tab-content" data-tab="mapping" style="display:none;">';
         echo '<table class="form-table"><tbody>';
 
         echo '<tr><th><label for="wpns-credential-id">'
-            . esc_html__( 'Credential Profile', 'wp-netsuite-forms' ) . '</label></th><td>';
+            . esc_html__( 'CRM Connection', 'wp-netsuite-forms' ) . '</label></th><td>';
         echo '<select id="wpns-credential-id" name="credential_id">';
-        echo '<option value="0">' . esc_html__( '— Select Credential —', 'wp-netsuite-forms' ) . '</option>';
+        echo '<option value="0">' . esc_html__( '— Select Connection —', 'wp-netsuite-forms' ) . '</option>';
         $selected_cred = $settings->credential_id ?? 0;
+        $crm_labels    = [
+            'netsuite' => 'NetSuite',
+            'odoo'     => 'Odoo',
+            'zoho'     => 'Zoho CRM',
+            'hubspot'  => 'HubSpot',
+            'webhook'  => 'Webhook',
+        ];
         foreach ( $credentials as $cred ) {
+            $crm_label = $crm_labels[ $cred->crm_type ?? 'netsuite' ] ?? ucfirst( $cred->crm_type ?? '' );
             echo '<option value="' . esc_attr( $cred->id ) . '"'
                 . selected( $selected_cred, $cred->id, false ) . '>'
-                . esc_html( $cred->profile_name ) . '</option>';
+                . esc_html( $cred->profile_name . ' [' . $crm_label . ']' ) . '</option>';
         }
         echo '</select>';
         echo ' <button type="button" class="button" id="wpns-test-netsuite">'
@@ -265,17 +273,18 @@ class WPNS_Admin_Form_Edit {
         echo '</td></tr>';
 
         $enable_netsuite = $settings ? (int) $settings->enable_netsuite : 1;
-        echo '<tr><th>' . esc_html__( 'Enable NetSuite', 'wp-netsuite-forms' ) . '</th>';
+        echo '<tr><th>' . esc_html__( 'Enable CRM Push', 'wp-netsuite-forms' ) . '</th>';
         echo '<td><label><input type="checkbox" name="enable_netsuite" value="1"'
             . checked( $enable_netsuite, 1, false ) . '> '
-            . esc_html__( 'Send submission to NetSuite', 'wp-netsuite-forms' )
+            . esc_html__( 'Send submission data to the selected CRM', 'wp-netsuite-forms' )
             . '</label></td></tr>';
 
         echo '<tr><th><label for="wpns-payload-template">'
-            . esc_html__( 'Payload Template (JSON)', 'wp-netsuite-forms' ) . '</label></th><td>';
+            . esc_html__( 'Field Mapping (JSON)', 'wp-netsuite-forms' ) . '</label></th><td>';
         echo '<textarea id="wpns-payload-template" name="payload_template"'
             . ' class="large-text code" rows="14">'
             . esc_textarea( $settings->payload_template ?? '{ }' ) . '</textarea>';
+        echo '<p class="description">' . esc_html__( 'Map CRM field names to form tokens. Example: {"email": "{{email}}", "firstname": "{{first_name}}"}. For NetSuite RESTlets, paste your full JSON payload template.', 'wp-netsuite-forms' ) . '</p>';
         echo '<div class="wpns-payload-toolbar">';
         echo '<button type="button" class="button" id="wpns-format-json">'
             . esc_html__( 'Format JSON', 'wp-netsuite-forms' ) . '</button>';
@@ -296,10 +305,10 @@ class WPNS_Admin_Form_Edit {
         echo '</tbody></table>';
 
         echo '<h3>' . esc_html__( 'Static Values', 'wp-netsuite-forms' ) . '</h3>';
-        echo '<p class="description">' . esc_html__( 'Map fixed values to NetSuite payload paths.', 'wp-netsuite-forms' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'Inject fixed values into every payload (e.g. record type, source tag).', 'wp-netsuite-forms' ) . '</p>';
         echo '<table class="widefat wpns-static-table">';
         echo '<thead><tr>'
-            . '<th>' . esc_html__( 'NetSuite Path', 'wp-netsuite-forms' ) . '</th>'
+            . '<th>' . esc_html__( 'Field Path / Key', 'wp-netsuite-forms' ) . '</th>'
             . '<th>' . esc_html__( 'Static Value', 'wp-netsuite-forms' ) . '</th>'
             . '<th style="width:80px;"></th>'
             . '</tr></thead>';
@@ -354,6 +363,26 @@ class WPNS_Admin_Form_Edit {
         echo '<p class="description">'
             . esc_html__( 'Optional: redirect to this URL after submission instead of showing the success message.', 'wp-netsuite-forms' )
             . '</p></td></tr>';
+
+        $enable_recaptcha = $settings ? (int) ( $settings->enable_recaptcha ?? 0 ) : 0;
+        $rc_site_key      = get_option( 'wpns_recaptcha_site_key', '' );
+        echo '<tr><th>' . esc_html__( 'reCAPTCHA v3', 'wp-netsuite-forms' ) . '</th>';
+        echo '<td><label><input type="checkbox" name="enable_recaptcha" value="1"'
+            . checked( $enable_recaptcha, 1, false ) . '> '
+            . esc_html__( 'Enable reCAPTCHA v3 spam protection for this form', 'wp-netsuite-forms' )
+            . '</label>';
+        if ( ! $rc_site_key ) {
+            echo '<p class="description" style="color:#d63638;">'
+                . sprintf(
+                    /* translators: %s: settings page link */
+                    esc_html__( 'reCAPTCHA keys are not configured. %s first.', 'wp-netsuite-forms' ),
+                    '<a href="' . esc_url( admin_url( 'admin.php?page=wpns-settings' ) ) . '">'
+                        . esc_html__( 'Add your keys in Settings', 'wp-netsuite-forms' )
+                    . '</a>'
+                )
+                . '</p>';
+        }
+        echo '</td></tr>';
 
         echo '</tbody></table>';
         echo '</div>'; // [data-tab="settings"]
@@ -478,6 +507,65 @@ class WPNS_Admin_Form_Edit {
         echo '<button type="button" class="button wpns-add-option">'
             . esc_html__( 'Add Option', 'wp-netsuite-forms' ) . '</button>';
         echo '</div>'; // .wpns-field-options
+
+        // ── Conditional logic ──────────────────────────────────────────────
+        $condition     = [];
+        if ( ! $is_template && ! empty( $field->condition_json ) ) {
+            $decoded_cond = json_decode( $field->condition_json, true );
+            if ( is_array( $decoded_cond ) ) {
+                $condition = $decoded_cond;
+            }
+        }
+        $cond_enabled  = ! empty( $condition );
+        $cond_field    = $condition['field']    ?? '';
+        $cond_operator = $condition['operator'] ?? '=';
+        $cond_value    = $condition['value']    ?? '';
+        $cond_body_vis = $cond_enabled ? '' : ' style="display:none;"';
+
+        echo '<div class="wpns-condition-section">';
+        echo '<label class="wpns-condition-toggle-label">';
+        echo '<input type="checkbox" class="wpns-condition-enable"' . checked( $cond_enabled, true, false ) . '> ';
+        echo esc_html__( 'Enable conditional logic (show/hide this field based on another field)', 'wp-netsuite-forms' );
+        echo '</label>';
+
+        echo '<div class="wpns-condition-body"' . $cond_body_vis . '>';
+        echo '<div class="wpns-condition-row">';
+        echo '<span class="wpns-condition-label-text">' . esc_html__( 'Show this field when', 'wp-netsuite-forms' ) . '</span>';
+
+        echo '<select class="wpns-condition-field">';
+        echo '<option value="">' . esc_html__( '— select field —', 'wp-netsuite-forms' ) . '</option>';
+        foreach ( $fields as $sibling ) {
+            if ( ! $is_template && $field && $sibling->id === $field->id ) {
+                continue; // Can't condition on self.
+            }
+            echo '<option value="' . esc_attr( $sibling->field_name ) . '"'
+                . selected( $cond_field, $sibling->field_name, false ) . '>'
+                . esc_html( $sibling->field_label ?: $sibling->field_name ) . '</option>';
+        }
+        echo '</select>';
+
+        echo '<select class="wpns-condition-operator">';
+        $operators = [
+            '='         => __( 'equals',           'wp-netsuite-forms' ),
+            '!='        => __( 'not equals',        'wp-netsuite-forms' ),
+            'contains'  => __( 'contains',          'wp-netsuite-forms' ),
+            '!contains' => __( 'does not contain',  'wp-netsuite-forms' ),
+            'empty'     => __( 'is empty',          'wp-netsuite-forms' ),
+            'not_empty' => __( 'is not empty',      'wp-netsuite-forms' ),
+        ];
+        foreach ( $operators as $op => $op_label ) {
+            echo '<option value="' . esc_attr( $op ) . '"' . selected( $cond_operator, $op, false ) . '>'
+                . esc_html( $op_label ) . '</option>';
+        }
+        echo '</select>';
+
+        echo '<input type="text" class="wpns-condition-value"'
+            . ' placeholder="' . esc_attr__( 'value', 'wp-netsuite-forms' ) . '"'
+            . ' value="' . esc_attr( $cond_value ) . '">';
+
+        echo '</div>'; // .wpns-condition-row
+        echo '</div>'; // .wpns-condition-body
+        echo '</div>'; // .wpns-condition-section
 
         echo '</div>'; // .wpns-field-body
         echo '</li>';

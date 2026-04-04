@@ -308,6 +308,17 @@ jQuery( function ( $ ) {
         $( this ).closest( '.wpns-option-row' ).remove();
     } );
 
+    /* ── Conditional logic toggle ───────────────────────────────────────────── */
+
+    $( document ).on( 'change', '.wpns-condition-enable', function () {
+        var $body = $( this ).closest( '.wpns-condition-section' ).find( '.wpns-condition-body' );
+        if ( $( this ).is( ':checked' ) ) {
+            $body.slideDown( 150 );
+        } else {
+            $body.slideUp( 150 );
+        }
+    } );
+
     /* ── Static values table ─────────────────────────────────────────────── */
 
     $( document ).on( 'click', '#wpns-add-static', function () {
@@ -380,15 +391,31 @@ jQuery( function ( $ ) {
                     value: $opt.find( '.wpns-option-value' ).val() || '',
                 } );
             } );
+            // Collect conditional logic.
+            var conditionJson = '';
+            if ( $item.find( '.wpns-condition-enable' ).is( ':checked' ) ) {
+                var condField    = $item.find( '.wpns-condition-field' ).val()    || '';
+                var condOperator = $item.find( '.wpns-condition-operator' ).val() || '=';
+                var condValue    = $item.find( '.wpns-condition-value' ).val()    || '';
+                if ( condField ) {
+                    conditionJson = JSON.stringify( {
+                        field:    condField,
+                        operator: condOperator,
+                        value:    condValue,
+                    } );
+                }
+            }
+
             fields.push( {
-                field_label: $item.find( '.wpns-field-label' ).val()    || '',
-                field_name:  $item.find( '.wpns-field-name' ).val()     || '',
-                field_type:  $item.find( '.wpns-field-type' ).val()     || 'text',
-                placeholder: $item.find( '.wpns-field-placeholder' ).val() || '',
-                default_val: $item.find( '.wpns-field-default' ).val()  || '',
-                css_class:   $item.find( '.wpns-field-css' ).val()      || '',
-                is_required: $item.find( '.wpns-field-required' ).is( ':checked' ) ? 1 : 0,
-                options:     options,
+                field_label:    $item.find( '.wpns-field-label' ).val()       || '',
+                field_name:     $item.find( '.wpns-field-name' ).val()        || '',
+                field_type:     $item.find( '.wpns-field-type' ).val()        || 'text',
+                placeholder:    $item.find( '.wpns-field-placeholder' ).val() || '',
+                default_val:    $item.find( '.wpns-field-default' ).val()     || '',
+                css_class:      $item.find( '.wpns-field-css' ).val()         || '',
+                is_required:    $item.find( '.wpns-field-required' ).is( ':checked' ) ? 1 : 0,
+                options:        options,
+                condition_json: conditionJson,
             } );
         } );
 
@@ -414,7 +441,8 @@ jQuery( function ( $ ) {
             payload_template:  $( '#wpns-payload-template' ).val()      || '',
             static_values_json: JSON.stringify( staticValues ),
             enable_netsuite:   $( 'input[name="enable_netsuite"]' ).is( ':checked' ) ? 1 : 0,
-            enable_email:      $( 'input[name="enable_email"]' ).is( ':checked' ) ? 1 : 0,
+            enable_email:      $( 'input[name="enable_email"]' ).is( ':checked' )    ? 1 : 0,
+            enable_recaptcha:  $( 'input[name="enable_recaptcha"]' ).is( ':checked' ) ? 1 : 0,
             email_from_name:   $( '#wpns-email-from-name' ).val()       || '',
             email_from_address: $( '#wpns-email-from-address' ).val()   || '',
             email_to:          $( '#wpns-email-to' ).val()              || '',

@@ -80,4 +80,74 @@ jQuery(function($) {
         $modal.find('.wpns-modal-pre').text(preview);
         $modal.show();
     });
+
+    /* ── Submission: View modal ──────────────────────────────��──────────────── */
+
+    $(document).on('click', '.wpns-view-submission', function() {
+        var raw = $(this).data('submission');
+        var text = '';
+        try {
+            var obj = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            text = JSON.stringify(obj, null, 2);
+        } catch (e) {
+            text = String(raw);
+        }
+        var $modal = $('#wpns-submission-modal');
+        $modal.find('.wpns-modal-pre').text(text);
+        $modal.show();
+    });
+
+    $(document).on('click', '.wpns-modal-close', function() {
+        $(this).closest('.wpns-modal').hide();
+    });
+
+    /* ── Submission: Delete ─────────────────────────────────────────────────── */
+
+    $(document).on('click', '.wpns-delete-submission', function() {
+        if (!confirm('Delete this submission? This cannot be undone.')) { return; }
+        var id   = $(this).data('submission-id');
+        var $row = $(this).closest('tr');
+        $.post(wpns_admin.ajax_url, {
+            action: 'wpns_delete_submission',
+            nonce:  wpns_admin.nonce,
+            submission_id: id,
+        }).done(function(res) {
+            if (res.success) {
+                $row.fadeOut(300, function() { $row.remove(); });
+            } else {
+                alert(res.data && res.data.message ? res.data.message : 'Delete failed.');
+            }
+        }).fail(function() {
+            alert('Delete failed.');
+        });
+    });
+
+    /* ── Submission: Retry CRM push ─────────────────────────────────────────── */
+
+    $(document).on('click', '.wpns-retry-submission', function() {
+        var $btn = $(this);
+        var id   = $btn.data('submission-id');
+        $btn.text('Retrying…').prop('disabled', true);
+
+        $.post(wpns_admin.ajax_url, {
+            action:        'wpns_retry_submission',
+            nonce:         wpns_admin.nonce,
+            submission_id: id,
+        }).done(function(res) {
+            if (res.success) {
+                $btn.text('Success!').css('color', 'green');
+                // Optionally update the NS Success badge in this row.
+                $btn.closest('tr').find('.wpns-badge:not(.success)').replaceWith(
+                    '<span class="wpns-badge success">Yes</span>'
+                );
+            } else {
+                var msg = res.data && res.data.message ? res.data.message : 'Retry failed.';
+                $btn.text('Retry CRM').prop('disabled', false);
+                alert(msg);
+            }
+        }).fail(function() {
+            $btn.text('Retry CRM').prop('disabled', false);
+            alert('Retry request failed.');
+        });
+    });
 });

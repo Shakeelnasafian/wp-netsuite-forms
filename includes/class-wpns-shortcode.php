@@ -41,17 +41,30 @@ class WPNS_Shortcode {
             return '';
         }
 
-        $fields = WPNS_Field_Model::get_fields($form_id);
+        $fields   = WPNS_Field_Model::get_fields( $form_id );
+        $settings = WPNS_Settings_Model::get( $form_id );
 
-        wp_enqueue_script('wpns-form-submit', WPNS_PLUGIN_URL . 'public/js/form-submit.js', ['jquery'], WPNS_VERSION, true);
-        wp_localize_script('wpns-form-submit', 'wpns_ajax', [
-            'url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wpns_form_nonce'),
-        ]);
-        wp_enqueue_style('wpns-forms', WPNS_PLUGIN_URL . 'public/css/forms.css', [], WPNS_VERSION);
+        wp_enqueue_style( 'wpns-forms', WPNS_PLUGIN_URL . 'public/css/forms.css', [], WPNS_VERSION );
+        wp_enqueue_script( 'wpns-form-submit', WPNS_PLUGIN_URL . 'public/js/form-submit.js', [ 'jquery' ], WPNS_VERSION, true );
+        wp_localize_script( 'wpns-form-submit', 'wpns_ajax', [
+            'url'              => admin_url( 'admin-ajax.php' ),
+            'nonce'            => wp_create_nonce( 'wpns_form_nonce' ),
+            'recaptcha_active' => ( $settings && ! empty( $settings->enable_recaptcha ) && WPNS_Recaptcha::is_enabled() ) ? '1' : '0',
+        ] );
+
+        // Enqueue reCAPTCHA v3 script if enabled for this form.
+        if ( $settings && ! empty( $settings->enable_recaptcha ) && WPNS_Recaptcha::is_enabled() ) {
+            wp_enqueue_script(
+                'google-recaptcha',
+                'https://www.google.com/recaptcha/api.js?render=' . esc_attr( WPNS_Recaptcha::get_site_key() ),
+                [],
+                null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+                true
+            );
+        }
 
         ob_start();
-        include WPNS_PLUGIN_DIR . 'public/templates/form.php';
+        include WPNS_PLUGIN_DIR . 'public/templates/form.php'; // $form, $fields, $settings available
         return ob_get_clean();
     }
 }

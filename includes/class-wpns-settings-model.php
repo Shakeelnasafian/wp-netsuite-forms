@@ -33,9 +33,11 @@ class WPNS_Settings_Model {
         $payload_template = $data['payload_template'] ?? '';
         $static_values_json = $data['static_values_json'] ?? '';
 
+        $enable_recaptcha = ! empty( $data['enable_recaptcha'] ) ? 1 : 0;
+
         if ($existing_id) {
             $sql = $wpdb->prepare(
-                "UPDATE $table SET credential_id=%d, payload_template=%s, static_values_json=%s, email_to=%s, email_cc=%s, email_bcc=%s, email_subject=%s, email_body=%s, email_from_name=%s, email_from_address=%s, enable_netsuite=%d, enable_email=%d WHERE form_id=%d",
+                "UPDATE $table SET credential_id=%d, payload_template=%s, static_values_json=%s, email_to=%s, email_cc=%s, email_bcc=%s, email_subject=%s, email_body=%s, email_from_name=%s, email_from_address=%s, enable_netsuite=%d, enable_email=%d, enable_recaptcha=%d WHERE form_id=%d",
                 $data['credential_id'] ?? 0,
                 $payload_template,
                 $static_values_json,
@@ -48,14 +50,15 @@ class WPNS_Settings_Model {
                 $data['email_from_address'] ?? '',
                 !empty($data['enable_netsuite']) ? 1 : 0,
                 !empty($data['enable_email']) ? 1 : 0,
+                $enable_recaptcha,
                 $form_id
             );
             return $wpdb->query($sql) !== false;
         }
 
         $sql = $wpdb->prepare(
-            "INSERT INTO $table (form_id, credential_id, payload_template, static_values_json, email_to, email_cc, email_bcc, email_subject, email_body, email_from_name, email_from_address, enable_netsuite, enable_email)
-             VALUES (%d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d)",
+            "INSERT INTO $table (form_id, credential_id, payload_template, static_values_json, email_to, email_cc, email_bcc, email_subject, email_body, email_from_name, email_from_address, enable_netsuite, enable_email, enable_recaptcha)
+             VALUES (%d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d)",
             $form_id,
             $data['credential_id'] ?? 0,
             $payload_template,
@@ -68,7 +71,8 @@ class WPNS_Settings_Model {
             $data['email_from_name'] ?? '',
             $data['email_from_address'] ?? '',
             !empty($data['enable_netsuite']) ? 1 : 0,
-            !empty($data['enable_email']) ? 1 : 0
+            !empty($data['enable_email']) ? 1 : 0,
+            $enable_recaptcha
         );
 
         return $wpdb->query($sql) !== false;

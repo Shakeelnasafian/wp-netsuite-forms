@@ -89,13 +89,12 @@ class WPNS_Form_Model {
         global $wpdb;
         $table = $wpdb->prefix . 'wpns_forms';
 
-        WPNS_Field_Model::delete_by_form($id);
-        if (method_exists('WPNS_Settings_Model', 'delete_by_form')) {
-            WPNS_Settings_Model::delete_by_form($id);
-        }
+        WPNS_Field_Model::delete_by_form( $id );
+        WPNS_Settings_Model::delete_by_form( $id );
+        WPNS_Submission_Model::delete_by_form( $id );
 
-        $sql = $wpdb->prepare("DELETE FROM $table WHERE id=%d", $id);
-        return $wpdb->query($sql) !== false;
+        $sql = $wpdb->prepare( "DELETE FROM $table WHERE id=%d", $id );
+        return $wpdb->query( $sql ) !== false;
     }
 
     /**

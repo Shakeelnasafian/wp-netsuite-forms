@@ -1,9 +1,24 @@
 <?php
-/** @var object $form */
-/** @var array  $fields */
+/** @var object $form     */
+/** @var array  $fields   */
+/** @var object $settings */
 ?>
-<form class="wpns-form" method="post" enctype="multipart/form-data" novalidate>
+<form class="wpns-form" method="post" enctype="multipart/form-data" novalidate
+      data-form-id="<?php echo esc_attr( $form->id ); ?>">
+
     <input type="hidden" name="wpns_form_id" value="<?php echo esc_attr( $form->id ); ?>">
+
+    <?php if ( isset( $settings ) && ! empty( $settings->enable_recaptcha ) ) : ?>
+        <input type="hidden" name="wpns_recaptcha_token" class="wpns-recaptcha-token" value="">
+    <?php endif; ?>
+
+    <!-- Honeypot: hidden from real users, filled by bots -->
+    <div class="wpns-hp-wrap" aria-hidden="true"
+         style="display:none !important;position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+        <label for="_wpns_hp">Leave this field empty</label>
+        <input type="text" name="_wpns_hp" id="_wpns_hp" value=""
+               autocomplete="off" tabindex="-1">
+    </div>
 
     <?php foreach ( $fields as $field ) :
         $name      = $field->field_name;
@@ -20,17 +35,28 @@
                 $options = $decoded;
             }
         }
+
+        // Conditional logic data attribute.
+        $condition_attr = '';
+        if ( ! empty( $field->condition_json ) ) {
+            $cond = json_decode( $field->condition_json, true );
+            if ( is_array( $cond ) && ! empty( $cond['enabled'] ) ) {
+                $condition_attr = ' data-condition="' . esc_attr( wp_json_encode( $cond ) ) . '"';
+            }
+        }
     ?>
 
         <?php if ( $type === 'hidden' ) : ?>
             <input type="hidden"
                    name="<?php echo esc_attr( $name ); ?>"
-                   value="<?php echo esc_attr( $default ); ?>">
+                   value="<?php echo esc_attr( $default ); ?>"
+                   data-url-param="<?php echo esc_attr( $name ); ?>">
             <?php continue; ?>
         <?php endif; ?>
 
         <div class="wpns-field<?php echo $css_class ? ' ' . esc_attr( $css_class ) : ''; ?>"
-             data-field-name="<?php echo esc_attr( $name ); ?>">
+             data-field-name="<?php echo esc_attr( $name ); ?>"
+             <?php echo $condition_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 
             <label for="wpns-field-<?php echo esc_attr( $name ); ?>">
                 <?php echo esc_html( $label ); ?>
@@ -47,6 +73,7 @@
                        placeholder="<?php echo esc_attr( $ph ); ?>"
                        value="<?php echo esc_attr( $default ); ?>"
                        data-label="<?php echo esc_attr( $label ); ?>"
+                       data-url-param="<?php echo esc_attr( $name ); ?>"
                        <?php echo $required ? 'required aria-required="true"' : ''; ?>>
 
             <?php elseif ( $type === 'textarea' ) : ?>
@@ -85,8 +112,7 @@
 
             <?php elseif ( $type === 'radio' ) : ?>
 
-                <div class="wpns-options"
-                     role="radiogroup"
+                <div class="wpns-options" role="radiogroup"
                      aria-label="<?php echo esc_attr( $label ); ?>">
                     <?php foreach ( $options as $opt ) :
                         $opt_label = $opt['label'] ?? '';
